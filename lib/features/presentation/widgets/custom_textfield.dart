@@ -1,0 +1,43 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+class CustomTextField extends StatelessWidget {
+  final String label;
+  final String? errorText;
+  final String? hintText;
+  final TextInputType keyboardType;
+  final TextInputAction textInputAction;
+  final int maxLines;
+  final bool onlyDigits;
+  final ValueChanged<String> onChanged;
+
+  const CustomTextField({
+    super.key,
+    required this.label,
+    required this.onChanged,
+    this.errorText,
+    this.hintText,
+    this.keyboardType = TextInputType.text,
+    this.textInputAction = TextInputAction.next,
+    this.maxLines = 1,
+    this.onlyDigits = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      onChanged: onChanged,
+      keyboardType: keyboardType,
+      textInputAction: textInputAction,
+      maxLines: maxLines,
+      inputFormatters: onlyDigits
+          ? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly]
+          : null,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hintText,
+        errorText: errorText,
+      ),
+    );
+  }
+}

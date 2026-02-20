@@ -22,7 +22,7 @@ class ValidateParentUseCase {
       'email': emailValidator(email),
       'phone': phoneValidator(phone),
       'documentId': requiredValidator(documentId, message: 'Documento obligatorio'),
-      'birthDate': birthDate == null ? 'Fecha de nacimiento obligatoria' : null,
+      'birthDate': adultBirthDateValidator(birthDate),
     };
 
     return ParentValidationResult(errors);
