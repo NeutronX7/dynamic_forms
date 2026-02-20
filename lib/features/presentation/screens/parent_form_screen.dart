@@ -148,6 +148,43 @@ class ParentFormScreen extends ConsumerWidget {
                   ),
                 ),
               const SizedBox(height: 12),
+              Text(
+                'Canales de contacto preferidos * (Checkboxes)',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              const SizedBox(height: 8),
+
+              CheckboxListTile(
+                title: const Text('WhatsApp'),
+                value: form.contactChannels.contains('WhatsApp'),
+                onChanged: (_) => controller.toggleContactChannel('WhatsApp'),
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+              ),
+              CheckboxListTile(
+                title: const Text('Email'),
+                value: form.contactChannels.contains('Email'),
+                onChanged: (_) => controller.toggleContactChannel('Email'),
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+              ),
+              CheckboxListTile(
+                title: const Text('Llamada'),
+                value: form.contactChannels.contains('Llamada'),
+                onChanged: (_) => controller.toggleContactChannel('Llamada'),
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+              ),
+
+              if (form.errors['contactChannels'] != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    form.errors['contactChannels']!,
+                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+                  ),
+                ),
+              const SizedBox(height: 12),
               CustomFormButtom(controller: controller),
             ],
           ),
