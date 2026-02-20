@@ -3,12 +3,19 @@ import 'package:flutter/material.dart';
 
 class AppRoutes {
   static const parentList = '/';
+  static const parentCreate = '/parent/create';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case parentList:
         return MaterialPageRoute(
           builder: (_) => const ParentListScreen(),
+          settings: settings,
+        );
+
+      case parentCreate:
+        return MaterialPageRoute(
+          builder: (_) => const ParentFormScreen(),
           settings: settings,
         );
 
