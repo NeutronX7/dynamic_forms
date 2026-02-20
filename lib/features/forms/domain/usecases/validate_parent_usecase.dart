@@ -15,6 +15,7 @@ class ValidateParentUseCase {
     required String phone,
     required String documentId,
     required DateTime? birthDate,
+    required String relationship
   }) {
     final errors = <String, String?>{
       'firstName': requiredValidator(firstName, message: 'Nombre obligatorio'),
@@ -23,6 +24,7 @@ class ValidateParentUseCase {
       'phone': phoneValidator(phone),
       'documentId': requiredValidator(documentId, message: 'Documento obligatorio'),
       'birthDate': adultBirthDateValidator(birthDate),
+      'relationship': requiredValidator(relationship, message: 'Selecciona una relación'),
     };
 
     return ParentValidationResult(errors);

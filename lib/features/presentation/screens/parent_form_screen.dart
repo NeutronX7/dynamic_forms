@@ -75,6 +75,29 @@ class ParentFormScreen extends ConsumerWidget {
                 onChanged: controller.setDocumentId,
                 textInputAction: TextInputAction.done,
               ),
+              const SizedBox(height: 12),
+              InputDecorator(
+                decoration: InputDecoration(
+                  labelText: 'Relación * (Select)',
+                  errorText: form.errors['relationship'],
+                  border: const OutlineInputBorder(),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: form.relationship,
+                    isExpanded: true,
+                    items: const [
+                      DropdownMenuItem(value: 'Padre', child: Text('Padre')),
+                      DropdownMenuItem(value: 'Madre', child: Text('Madre')),
+                      DropdownMenuItem(value: 'Tutor', child: Text('Tutor')),
+                    ],
+                    onChanged: (v) {
+                      if (v != null) controller.setRelationship(v);
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
               CustomFormButtom(controller: controller),
             ],
           ),
