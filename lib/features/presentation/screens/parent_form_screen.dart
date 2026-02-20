@@ -98,6 +98,56 @@ class ParentFormScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 12),
+              Text(
+                'Género * (Radio)',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              const SizedBox(height: 8),
+              Column(
+                children: [
+                  RadioListTile<String>(
+                    title: Text('Masculino'),
+                    value: 'Masculino',
+                    groupValue: form.gender,
+                    onChanged: (v) => controller.setGender(v!),
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  RadioListTile<String>(
+                    title: Text('Femenino'),
+                    value: 'Femenino',
+                    groupValue: form.gender,
+                    onChanged: (v) => controller.setGender(v!),
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  RadioListTile<String>(
+                    title: Text('Otro'),
+                    value: 'Otro',
+                    groupValue: form.gender,
+                    onChanged: (v) => controller.setGender(v!),
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  RadioListTile<String>(
+                    title: Text('Prefiero no decir'),
+                    value: 'Prefiero no decir',
+                    groupValue: form.gender,
+                    onChanged: (v) => controller.setGender(v!),
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ],
+              ),
+              if (form.errors['gender'] != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    form.errors['gender']!,
+                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+                  ),
+                ),
+              const SizedBox(height: 12),
               CustomFormButtom(controller: controller),
             ],
           ),

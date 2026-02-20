@@ -10,6 +10,7 @@ class ParentFormState {
   final DateTime? birthDate;
   final String documentId;
   final String relationship;
+  final String gender;
 
 
   final Map<String, String?> errors;
@@ -22,7 +23,8 @@ class ParentFormState {
     this.birthDate,
     this.documentId = '',
     this.errors = const {},
-    this.relationship = 'Padre'
+    this.relationship = 'Padre',
+    this.gender = 'Prefiero no decir'
   });
 
   ParentFormState copyWith({
@@ -33,6 +35,7 @@ class ParentFormState {
     DateTime? birthDate,
     String? documentId,
     String? relationship,
+    String? gender,
     Map<String, String?>? errors,
   }) {
     return ParentFormState(
@@ -43,6 +46,7 @@ class ParentFormState {
       birthDate: birthDate ?? this.birthDate,
       documentId: documentId ?? this.documentId,
       relationship: relationship ?? this.relationship,
+      gender: gender ?? this.gender,
       errors: errors ?? this.errors,
     );
   }
@@ -63,6 +67,7 @@ class ParentFormController extends Notifier<ParentFormState> {
   void setBirthDate(DateTime v) => state = state.copyWith(birthDate: v);
   void setDocumentId(String v) => state = state.copyWith(documentId: v);
   void setRelationship(String v) => state = state.copyWith(relationship: v);
+  void setGender(String v) => state = state.copyWith(gender: v);
 
   bool validate() {
     final result = _validate(
@@ -72,7 +77,8 @@ class ParentFormController extends Notifier<ParentFormState> {
       phone: state.phone,
       documentId: state.documentId,
       birthDate: state.birthDate,
-      relationship: state.relationship
+      relationship: state.relationship,
+      gender: state.gender
     );
     state = state.copyWith(errors: result.errors);
     return result.isValid;
