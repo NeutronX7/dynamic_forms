@@ -192,6 +192,51 @@ class ParentFormScreen extends ConsumerWidget {
                 contentPadding: EdgeInsets.zero,
               ),
               const SizedBox(height: 12),
+
+              Text(
+                'Ocupación * (Autocomplete)',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              const SizedBox(height: 8),
+
+              Autocomplete<String>(
+                initialValue: TextEditingValue(text: form.occupation),
+                optionsBuilder: (TextEditingValue textEditingValue) {
+                  final query = textEditingValue.text.trim().toLowerCase();
+                  if (query.isEmpty) return const Iterable<String>.empty();
+
+                  const options = <String>[
+                    'Doctor/a',
+                    'Maestro/a',
+                    'Ingeniero/a',
+                    'Abogado/a',
+                    'Contador/a',
+                    'Enfermero/a',
+                    'Policía',
+                    'Comerciante',
+                    'Estudiante',
+                    'Otro',
+                  ];
+
+                  return options.where((o) => o.toLowerCase().contains(query));
+                },
+                onSelected: (value) {
+                  controller.setOccupation(value);
+                },
+                fieldViewBuilder: (context, textController, focusNode, onFieldSubmitted) {
+                  return TextField(
+                    controller: textController,
+                    focusNode: focusNode,
+                    onChanged: controller.setOccupation, // importante: guardar texto mientras escribe
+                    decoration: InputDecoration(
+                      hintText: 'Escribe para buscar...',
+                      border: const OutlineInputBorder(),
+                      errorText: form.errors['occupation'],
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 12),
               CustomFormButtom(controller: controller),
             ],
           ),

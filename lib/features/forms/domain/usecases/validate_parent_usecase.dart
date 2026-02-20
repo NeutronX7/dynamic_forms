@@ -18,6 +18,7 @@ class ValidateParentUseCase {
     required String relationship,
     required String gender,
     required Set<String> contactChannels,
+    required String occupation,
   }) {
     final errors = <String, String?>{
       'firstName': requiredValidator(firstName, message: 'Nombre obligatorio'),
@@ -29,6 +30,7 @@ class ValidateParentUseCase {
       'relationship': requiredValidator(relationship, message: 'Selecciona una relación'),
       'gender': requiredValidator(gender, message: 'Selecciona un género'),
       'contactChannels': contactChannels.isEmpty ? 'Selecciona un canal de contacto' : null,
+      'occupation': requiredValidator(occupation, message: 'Selecciona una ocupación'),
     };
 
     return ParentValidationResult(errors);
