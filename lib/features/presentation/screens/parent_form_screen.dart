@@ -185,6 +185,13 @@ class ParentFormScreen extends ConsumerWidget {
                   ),
                 ),
               const SizedBox(height: 12),
+              SwitchListTile(
+                title: const Text('¿Está casado? (Switch)'),
+                value: form.isMarried,
+                onChanged: controller.setIsMarried,
+                contentPadding: EdgeInsets.zero,
+              ),
+              const SizedBox(height: 12),
               CustomFormButtom(controller: controller),
             ],
           ),
