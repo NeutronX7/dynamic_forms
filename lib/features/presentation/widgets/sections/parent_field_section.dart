@@ -1,3 +1,4 @@
+import 'package:dynamic_forms/core/constants/constants.dart';
 import 'package:flutter/material.dart';
 
 import '../../controllers/parent_form_controller.dart';
@@ -70,68 +71,89 @@ class ParentFieldsSection extends StatelessWidget {
 
         const SizedBox(height: 18),
 
-        CustomSelectField(
-          label: 'Relación *',
-          value: form.relationship,
-          errorText: form.errors['relationship'],
-          items: const [
-            DropdownMenuItem(value: 'Padre', child: Text('Padre')),
-            DropdownMenuItem(value: 'Madre', child: Text('Madre')),
-            DropdownMenuItem(value: 'Tutor', child: Text('Tutor')),
-          ],
-          onChanged: (v) {
-            if (v != null) controller.setRelationship(v);
-          },
-        ),
-        const SizedBox(height: 12),
-        CustomRadioGroup(
-          label: 'Género',
-          groupValue: form.gender,
-          options: const ['Masculino', 'Femenino'],
-          onChanged: controller.setGender,
-          errorText: form.errors['gender'],
-        ),
-        const SizedBox(height: 12),
-        CustomCheckboxGroup(
-          label: 'Canales de contacto preferidos',
-          options: const ['WhatsApp', 'Email', 'Llamada'],
-          selected: form.contactChannels,
-          onToggle: controller.toggleContactChannel,
-          errorText: form.errors['contactChannels'],
-        ),
-        const SizedBox(height: 12),
-        CustomSwitchField(
-          label: '¿Está casado?',
-          value: form.isMarried,
-          onChanged: controller.setIsMarried,
-        ),
-        const SizedBox(height: 12),
-        CustomAutocompleteField(
-          label: 'Ocupación',
-          value: form.occupation,
-          options: const [
-            'Doctor/a',
-            'Maestro/a',
-            'Ingeniero/a',
-            'Abogado/a',
-            'Contador/a',
-            'Enfermero/a',
-            'Policía',
-            'Comerciante',
-            'Estudiante',
-            'Otro',
-          ],
-          onChanged: controller.setOccupation,
-          onSelected: controller.setOccupation,
-          errorText: form.errors['occupation'],
-        ),
-        const SizedBox(height: 12),
-        CustomTextField(
-          label: 'Observaciones',
-          onChanged: controller.setObservations,
-          maxLines: 4,
-        ),
+        _OptionalFieldsTile(form: form, controller: controller),
       ],
+    );
+  }
+}
+
+class _OptionalFieldsTile extends StatelessWidget {
+  final ParentFormState form;
+  final ParentFormController controller;
+
+  const _OptionalFieldsTile({
+    required this.form,
+    required this.controller,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: ExpansionTile(
+        title: Text('Información adicional del responsable', style: TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: const Text('Toca para agregar más información'),
+        childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        children: [
+          const SizedBox(height: 8),
+
+          CustomSelectField(
+            label: 'Relación',
+            value: form.relationship,
+            errorText: form.errors['relationship'],
+            items: const [
+              DropdownMenuItem(value: 'Padre', child: Text('Padre')),
+              DropdownMenuItem(value: 'Madre', child: Text('Madre')),
+              DropdownMenuItem(value: 'Tutor', child: Text('Tutor'))
+            ],
+            onChanged: (v) {
+              if (v != null) controller.setRelationship(v);
+            },
+          ),
+          const SizedBox(height: 12),
+
+          CustomRadioGroup(
+            label: 'Género',
+            groupValue: form.gender,
+            options: const ['Masculino', 'Femenino'],
+            onChanged: controller.setGender,
+            errorText: form.errors['gender'],
+          ),
+          const SizedBox(height: 12),
+
+          CustomCheckboxGroup(
+            label: 'Canales de contacto preferidos',
+            options: contactOptions,
+            selected: form.contactChannels,
+            onToggle: controller.toggleContactChannel,
+            errorText: form.errors['contactChannels'],
+          ),
+          const SizedBox(height: 12),
+
+          CustomSwitchField(
+            label: '¿Está casado?',
+            value: form.isMarried,
+            onChanged: controller.setIsMarried,
+          ),
+          const SizedBox(height: 12),
+
+          CustomAutocompleteField(
+            label: 'Ocupación',
+            value: form.occupation,
+            options: occupations,
+            onChanged: controller.setOccupation,
+            onSelected: controller.setOccupation,
+            errorText: form.errors['occupation'],
+          ),
+          const SizedBox(height: 12),
+
+          CustomTextField(
+            label: 'Observaciones',
+            onChanged: controller.setObservations,
+            maxLines: 4,
+          ),
+        ],
+      ),
     );
   }
 }

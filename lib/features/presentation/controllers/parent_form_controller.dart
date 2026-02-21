@@ -16,7 +16,7 @@ class ParentFormState {
   final String occupation;
   final String observations;
 
-
+  final List<ChildFormState> children;
   final Map<String, String?> errors;
 
   const ParentFormState({
@@ -32,6 +32,7 @@ class ParentFormState {
     this.occupation = '',
     this.observations = '',
     this.contactChannels = const{},
+    this.children = const [],
     this.errors = const {},
   });
 
@@ -48,6 +49,7 @@ class ParentFormState {
     bool? isMarried,
     String? occupation,
     String? observations,
+    List<ChildFormState>? children,
     Map<String, String?>? errors,
   }) {
     return ParentFormState(
@@ -63,6 +65,7 @@ class ParentFormState {
       isMarried: isMarried ?? this.isMarried,
       occupation: occupation ?? this.occupation,
       observations: observations ?? this.observations,
+      children: children ?? this.children,
       errors: errors ?? this.errors,
     );
   }
@@ -96,6 +99,10 @@ class ParentFormController extends Notifier<ParentFormState> {
   void setIsMarried(bool v) => state = state.copyWith(isMarried: v);
   void setOccupation(String v) => state = state.copyWith(occupation: v);
   void setObservations(String v) => state = state.copyWith(observations: v);
+  void addChild() {
+    final newChild = ChildFormState.empty();
+    state = state.copyWith(children: [...state.children, newChild]);
+  }
 
   bool validate() {
     final result = _validate(
@@ -118,3 +125,42 @@ class ParentFormController extends Notifier<ParentFormState> {
 
 final parentFormControllerProvider =
 NotifierProvider<ParentFormController, ParentFormState>(ParentFormController.new);
+
+class ChildFormState {
+  final String firstName;
+  final String lastName;
+  final int? age;
+  final DateTime? birthDate;
+  final String hairColor;
+
+  final Map<String, String?> errors;
+
+  const ChildFormState({
+    this.firstName = '',
+    this.lastName = '',
+    this.age,
+    this.birthDate,
+    this.hairColor = '',
+    this.errors = const {},
+  });
+
+  factory ChildFormState.empty() => const ChildFormState();
+
+  ChildFormState copyWith({
+    String? firstName,
+    String? lastName,
+    int? age,
+    DateTime? birthDate,
+    String? hairColor,
+    Map<String, String?>? errors,
+  }) {
+    return ChildFormState(
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      age: age ?? this.age,
+      birthDate: birthDate ?? this.birthDate,
+      hairColor: hairColor ?? this.hairColor,
+      errors: errors ?? this.errors,
+    );
+  }
+}
