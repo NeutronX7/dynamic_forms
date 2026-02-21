@@ -1,4 +1,7 @@
+import 'package:dynamic_forms/core/validators/validate_children.dart';
+
 import '../../../../core/validators/validators.dart';
+import '../../presentation/models/child_form_state.dart';
 
 class ParentValidationResult {
   final Map<String, String?> errors;
@@ -19,6 +22,7 @@ class ValidateParentUseCase {
     String? gender,
     Set<String>? contactChannels,
     String? occupation,
+    required List<ChildFormState> children
   }) {
     final errors = <String, String?>{
       'firstName': requiredValidator(firstName, message: 'Nombre obligatorio'),
@@ -26,7 +30,8 @@ class ValidateParentUseCase {
       'email': emailValidator(email),
       'phone': phoneValidator(phone),
       'documentId': requiredValidator(documentId, message: 'Documento obligatorio'),
-      'birthDate': adultBirthDateValidator(birthDate)
+      'birthDate': adultBirthDateValidator(birthDate),
+      'children': requireValidateChildren(children, message: 'Debe tener al menos un hijo')
     };
 
     return ParentValidationResult(errors);

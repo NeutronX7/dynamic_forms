@@ -38,6 +38,41 @@ class ParentFormController extends Notifier<ParentFormState> {
     state = state.copyWith(children: [...state.children, newChild]);
   }
 
+  void removeChild(int index) {
+    final next = [...state.children]..removeAt(index);
+    state = state.copyWith(children: next);
+  }
+
+  void setChildFirstName(int index, String v) {
+    final next = [...state.children];
+    next[index] = next[index].copyWith(firstName: v);
+    state = state.copyWith(children: next);
+  }
+
+  void setChildLastName(int index, String v) {
+    final next = [...state.children];
+    next[index] = next[index].copyWith(lastName: v);
+    state = state.copyWith(children: next);
+  }
+
+  void setChildAge(int index, int? v) {
+    final next = [...state.children];
+    next[index] = next[index].copyWith(age: v);
+    state = state.copyWith(children: next);
+  }
+
+  void setChildBirthDate(int index, DateTime v) {
+    final next = [...state.children];
+    next[index] = next[index].copyWith(birthDate: v);
+    state = state.copyWith(children: next);
+  }
+
+  void setChildHairColor(int index, String v) {
+    final next = [...state.children];
+    next[index] = next[index].copyWith(hairColor: v);
+    state = state.copyWith(children: next);
+  }
+
   bool validate() {
     final result = _validate(
       firstName: state.firstName,
@@ -50,6 +85,7 @@ class ParentFormController extends Notifier<ParentFormState> {
       gender: state.gender,
       contactChannels: state.contactChannels,
       occupation: state.occupation,
+      children: state.children
     );
     state = state.copyWith(errors: result.errors);
     return result.isValid;

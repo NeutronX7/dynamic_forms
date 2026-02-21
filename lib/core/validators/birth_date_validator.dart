@@ -20,3 +20,18 @@ String? adultBirthDateValidator(
 
   return null;
 }
+
+String? childBirthdate(
+    DateTime? birthDate, {
+      DateTime? now,
+    }) {
+  if (birthDate == null) return 'Fecha de nacimiento obligatoria';
+
+  final today = (now ?? DateTime.now());
+  final todayDate = DateTime(today.year, today.month, today.day);
+  final b = DateTime(birthDate.year, birthDate.month, birthDate.day);
+
+  if (b.isAfter(todayDate)) return 'La fecha no puede ser futura';
+
+  return null;
+}
