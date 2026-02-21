@@ -2,6 +2,7 @@ import 'package:dynamic_forms/core/constants/constants.dart';
 import 'package:flutter/material.dart';
 
 import '../../controllers/parent_form_controller.dart';
+import '../../models/parent_form_state.dart';
 import '../widgets.dart';
 
 class ParentFieldsSection extends StatelessWidget {

@@ -26,11 +26,7 @@ class ValidateParentUseCase {
       'email': emailValidator(email),
       'phone': phoneValidator(phone),
       'documentId': requiredValidator(documentId, message: 'Documento obligatorio'),
-      'birthDate': adultBirthDateValidator(birthDate),
-      'relationship': requiredValidator(relationship, message: 'Selecciona una relación'),
-      'gender': requiredValidator(gender, message: 'Selecciona un género'),
-      'contactChannels': contactChannels!.isEmpty ? 'Selecciona un canal de contacto' : null,
-      'occupation': requiredValidator(occupation, message: 'Selecciona una ocupación'),
+      'birthDate': adultBirthDateValidator(birthDate)
     };
 
     return ParentValidationResult(errors);

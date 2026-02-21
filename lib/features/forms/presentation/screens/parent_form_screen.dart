@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../controllers/parent_form_controller.dart';
+import '../controllers/parent_form_providers.dart';
 import '../widgets/widgets.dart';
 
 class ParentFormScreen extends ConsumerWidget {

@@ -1,6 +1,7 @@
-import 'package:dynamic_forms/features/presentation/controllers/parent_form_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../controllers/parent_form_controller.dart';
 
 class CustomFormButtom extends ConsumerWidget {
   final ParentFormController controller;
@@ -24,7 +25,7 @@ class CustomFormButtom extends ConsumerWidget {
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Formulario válido ✅'),
+            content: Text('Formulario válido'),
           ),
         );
       },

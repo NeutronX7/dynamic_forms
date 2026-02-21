@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../controllers/parent_form_controller.dart';
+import '../../controllers/parent_form_providers.dart';
 
 class ChildrenSection extends ConsumerWidget {
   const ChildrenSection({super.key});
@@ -46,24 +46,20 @@ class ChildrenSection extends ConsumerWidget {
   }
 }
 
-class _CountPill extends StatelessWidget {
-  final int count;
-  const _CountPill({required this.count});
+class _ChildrenFormTile extends ConsumerWidget {
+
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        '$count',
-        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-          fontWeight: FontWeight.w700,
-        ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Card(
+      child: ExpansionTile(
+        title: Text('Hijos'),
+        subtitle: Text('Campos del hijo'),
+        children: [
+
+        ],
       ),
     );
   }
+
 }
