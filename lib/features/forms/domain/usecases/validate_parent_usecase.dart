@@ -15,10 +15,10 @@ class ValidateParentUseCase {
     required String phone,
     required String documentId,
     required DateTime? birthDate,
-    required String relationship,
-    required String gender,
-    required Set<String> contactChannels,
-    required String occupation,
+    String? relationship,
+    String? gender,
+    Set<String>? contactChannels,
+    String? occupation,
   }) {
     final errors = <String, String?>{
       'firstName': requiredValidator(firstName, message: 'Nombre obligatorio'),
@@ -29,7 +29,7 @@ class ValidateParentUseCase {
       'birthDate': adultBirthDateValidator(birthDate),
       'relationship': requiredValidator(relationship, message: 'Selecciona una relación'),
       'gender': requiredValidator(gender, message: 'Selecciona un género'),
-      'contactChannels': contactChannels.isEmpty ? 'Selecciona un canal de contacto' : null,
+      'contactChannels': contactChannels!.isEmpty ? 'Selecciona un canal de contacto' : null,
       'occupation': requiredValidator(occupation, message: 'Selecciona una ocupación'),
     };
 

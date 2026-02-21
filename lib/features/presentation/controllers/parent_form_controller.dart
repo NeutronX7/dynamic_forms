@@ -14,6 +14,7 @@ class ParentFormState {
   final Set<String> contactChannels;
   final bool isMarried;
   final String occupation;
+  final String observations;
 
 
   final Map<String, String?> errors;
@@ -29,6 +30,7 @@ class ParentFormState {
     this.gender = 'Prefiero no decir',
     this.isMarried = false,
     this.occupation = '',
+    this.observations = '',
     this.contactChannels = const{},
     this.errors = const {},
   });
@@ -45,6 +47,7 @@ class ParentFormState {
     Set<String>? contactChannels,
     bool? isMarried,
     String? occupation,
+    String? observations,
     Map<String, String?>? errors,
   }) {
     return ParentFormState(
@@ -59,6 +62,7 @@ class ParentFormState {
       contactChannels: contactChannels ?? this.contactChannels,
       isMarried: isMarried ?? this.isMarried,
       occupation: occupation ?? this.occupation,
+      observations: observations ?? this.observations,
       errors: errors ?? this.errors,
     );
   }
@@ -91,6 +95,7 @@ class ParentFormController extends Notifier<ParentFormState> {
   }
   void setIsMarried(bool v) => state = state.copyWith(isMarried: v);
   void setOccupation(String v) => state = state.copyWith(occupation: v);
+  void setObservations(String v) => state = state.copyWith(observations: v);
 
   bool validate() {
     final result = _validate(

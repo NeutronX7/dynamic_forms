@@ -149,7 +149,7 @@ class ParentFormScreen extends ConsumerWidget {
                 ),
               const SizedBox(height: 12),
               Text(
-                'Canales de contacto preferidos * (Checkboxes)',
+                'Canales de contacto preferidos',
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               const SizedBox(height: 8),
@@ -186,7 +186,7 @@ class ParentFormScreen extends ConsumerWidget {
                 ),
               const SizedBox(height: 12),
               SwitchListTile(
-                title: const Text('¿Está casado? (Switch)'),
+                title: const Text('¿Está casado?'),
                 value: form.isMarried,
                 onChanged: controller.setIsMarried,
                 contentPadding: EdgeInsets.zero,
@@ -194,7 +194,7 @@ class ParentFormScreen extends ConsumerWidget {
               const SizedBox(height: 12),
 
               Text(
-                'Ocupación * (Autocomplete)',
+                'Ocupación *',
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               const SizedBox(height: 8),
@@ -227,7 +227,7 @@ class ParentFormScreen extends ConsumerWidget {
                   return TextField(
                     controller: textController,
                     focusNode: focusNode,
-                    onChanged: controller.setOccupation, // importante: guardar texto mientras escribe
+                    onChanged: controller.setOccupation,
                     decoration: InputDecoration(
                       hintText: 'Escribe para buscar...',
                       border: const OutlineInputBorder(),
@@ -235,6 +235,13 @@ class ParentFormScreen extends ConsumerWidget {
                     ),
                   );
                 },
+              ),
+              const SizedBox(height: 12),
+              CustomTextField(
+                label: 'Observaciones',
+                onChanged: controller.setObservations,
+                textInputAction: TextInputAction.done,
+                maxLines: 4,
               ),
               const SizedBox(height: 12),
               CustomFormButtom(controller: controller),
