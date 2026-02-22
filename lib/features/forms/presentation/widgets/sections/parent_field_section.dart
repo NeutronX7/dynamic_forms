@@ -2,9 +2,7 @@ import 'package:dynamic_forms/core/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../controllers/parent_form_controller.dart';
 import '../../controllers/parent_form_providers.dart';
-import '../../models/parent_form_state.dart';
 import '../widgets.dart';
 
 class ParentFieldsSection extends ConsumerWidget {
@@ -78,6 +76,7 @@ class ParentFieldsSection extends ConsumerWidget {
         CustomTextField(
           label: 'Documento de identificación *',
           value: form.documentId,
+          keyboardType: TextInputType.number,
           controller: docC,
           errorText: form.errors['documentId'],
           onChanged: controller.setDocumentId,

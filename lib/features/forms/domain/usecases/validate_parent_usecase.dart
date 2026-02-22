@@ -28,7 +28,7 @@ class ValidateParentUseCase {
       'lastName': requiredValidator(lastName, message: 'Apellido obligatorio'),
       'email': emailValidator(email),
       'phone': phoneValidator(phone),
-      'documentId': requiredValidator(documentId, message: 'Documento obligatorio'),
+      'documentId': documentId13DigitsValidator(documentId, message: 'Documento debe tener 13 dígitos'),
       'birthDate': adultBirthDateValidator(birthDate),
       'children': requireValidateChildren(children, message: 'Debe tener al menos un hijo')
     };

@@ -133,6 +133,20 @@ class ParentFormController extends Notifier<ParentFormState> {
   void setPhone(String v) => state = state.copyWith(phone: v);
   void setBirthDate(DateTime v) => state = state.copyWith(birthDate: v);
   void setDocumentId(String v) => state = state.copyWith(documentId: v);
+  bool _documentIdExistsInOtherParent(String documentId) {
+    final doc = documentId.trim();
+    if (doc.isEmpty) return false;
+
+    final box = ref.read(parentsBoxProvider);
+
+    for (final p in box.values) {
+      if (state.id.isNotEmpty && p.id == state.id) continue;
+
+      if (p.documentId.trim() == doc) return true;
+    }
+
+    return false;
+  }
 
   void setRelationship(String v) => state = state.copyWith(relationship: v);
   void setGender(String v) => state = state.copyWith(gender: v);
@@ -202,6 +216,15 @@ class ParentFormController extends Notifier<ParentFormState> {
 
     final resolved = _resolveDuplicateCodesOnce();
     state = state.copyWith(children: resolved.children);
+
+    if (_documentIdExistsInOtherParent(state.documentId)) {
+      state = state.copyWith(errors: {
+        ...state.errors,
+        'documentId': 'Este documento ya está registrado en otro responsable',
+      });
+      return false;
+    }
+
 
     if (_hasDuplicateCodes(state.children)) {
       state = state.copyWith(errors: {
