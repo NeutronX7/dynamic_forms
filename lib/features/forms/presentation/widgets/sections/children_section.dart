@@ -60,6 +60,7 @@ class ChildrenSection extends ConsumerWidget {
             ...List.generate(form.children.length, (index) {
               final child = form.children[index];
               return Padding(
+                key: ValueKey(child.id),
                 padding: const EdgeInsets.only(bottom: 12),
                 child: _ChildFormTile(
                   index: index,
@@ -67,7 +68,7 @@ class ChildrenSection extends ConsumerWidget {
                   child: child,
                 ),
               );
-            }),
+            })
           ],
         ),
       ),
@@ -89,16 +90,21 @@ class _ChildFormTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.read(parentFormControllerProvider.notifier);
+    final hasCode = child.code.trim().isNotEmpty;
+
+    final firstNameC = ref.watch(textControllerProvider('child:${child.id}:firstName'));
+    final lastNameC  = ref.watch(textControllerProvider('child:${child.id}:lastName'));
+    final ageC       = ref.watch(textControllerProvider('child:${child.id}:age'));
+    final hairC      = ref.watch(textControllerProvider('child:${child.id}:hairColor'));
 
     return Card(
       clipBehavior: Clip.antiAlias,
       child: ExpansionTile(
         initiallyExpanded: true,
-        title: Text(
-          'Hijo $childNumber',
-          style: const TextStyle(fontWeight: FontWeight.w700),
+        title: Text('Hijo $childNumber • ${child.code.isEmpty ? "—" : child.code}'),
+        subtitle: Text(
+          hasCode ? 'Código generado' : 'Completa nombre, apellido y fecha para generar el código',
         ),
-        subtitle: const Text('Completa los datos del hijo'),
         trailing: IconButton(
           tooltip: 'Eliminar hijo',
           onPressed: () => controller.removeChild(index),
@@ -108,25 +114,33 @@ class _ChildFormTile extends ConsumerWidget {
         children: [
           const SizedBox(height: 8),
 
+          _ChildCodeBanner(code: child.code),
+
+          const SizedBox(height: 12),
+
           CustomTextField(
             label: 'Nombre *',
-            errorText: (child.errors)['firstName'],
+            value: child.firstName,
+            controller: firstNameC,
+            errorText: child.errors['firstName'],
             onChanged: (v) => controller.setChildFirstName(index, v),
           ),
           const SizedBox(height: 12),
-
           CustomTextField(
             label: 'Apellido *',
-            errorText: (child.errors)['lastName'],
+            value: child.lastName,
+            controller: lastNameC,
+            errorText: child.errors['lastName'],
             onChanged: (v) => controller.setChildLastName(index, v),
           ),
           const SizedBox(height: 12),
-
           CustomTextField(
             label: 'Edad *',
+            value: child.age?.toString() ?? '',
+            controller: ageC,
             keyboardType: TextInputType.number,
             onlyDigits: true,
-            errorText: (child.errors)['age'],
+            errorText: child.errors['age'],
             onChanged: (v) => controller.setChildAge(index, int.tryParse(v)),
           ),
           const SizedBox(height: 12),
@@ -134,7 +148,7 @@ class _ChildFormTile extends ConsumerWidget {
           CustomDateField(
             label: 'Fecha de nacimiento *',
             value: child.birthDate,
-            errorText: (child.errors)['birthDate'],
+            errorText: child.errors['birthDate'],
             onTap: () async {
               final now = DateTime.now();
               final picked = await showDatePicker(
@@ -149,9 +163,68 @@ class _ChildFormTile extends ConsumerWidget {
           const SizedBox(height: 12),
 
           CustomTextField(
-            label: 'Color de pelo',
-            errorText: (child.errors)['hairColor'],
+            label: 'Color de pelo *',
+            value: child.hairColor,
+            controller: hairC,
+            errorText: child.errors['hairColor'],
             onChanged: (v) => controller.setChildHairColor(index, v),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ChildCodeBanner extends StatelessWidget {
+  final String code;
+
+  const _ChildCodeBanner({required this.code});
+
+  @override
+  Widget build(BuildContext context) {
+    final hasCode = code.trim().isNotEmpty;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: hasCode
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).dividerColor,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(hasCode ? Icons.qr_code_2 : Icons.info_outline),
+          const SizedBox(width: 10),
+          Expanded(
+            child: hasCode
+                ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Código del hijo',
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                SelectableText(
+                  code,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ],
+            )
+                : Text(
+              'El código se genera automáticamente al completar nombre, apellido y fecha de nacimiento.',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
           ),
         ],
       ),

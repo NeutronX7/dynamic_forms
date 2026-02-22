@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 class CustomTextField extends StatelessWidget {
   final String label;
+  final String value;
   final String? errorText;
   final String? hintText;
   final TextInputType keyboardType;
@@ -10,11 +11,14 @@ class CustomTextField extends StatelessWidget {
   final int maxLines;
   final bool onlyDigits;
   final ValueChanged<String> onChanged;
+  final TextEditingController controller;
 
   const CustomTextField({
     super.key,
     required this.label,
+    required this.value,
     required this.onChanged,
+    required this.controller,
     this.errorText,
     this.hintText,
     this.keyboardType = TextInputType.text,
@@ -25,7 +29,16 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (controller.text != value) {
+      controller.value = controller.value.copyWith(
+        text: value,
+        selection: TextSelection.collapsed(offset: value.length),
+        composing: TextRange.empty,
+      );
+    }
+
     return TextField(
+      controller: controller,
       onChanged: onChanged,
       keyboardType: keyboardType,
       textInputAction: textInputAction,

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/usecases/validate_children_usecase.dart';
@@ -9,6 +10,35 @@ class ParentFormController extends Notifier<ParentFormState> {
   late final ValidateParentUseCase _validateParent;
   late final ValidateChildrenUsecase _validateChildren;
 
+  String _newChildId() => DateTime.now().microsecondsSinceEpoch.toString();
+
+  String _firstLetter(String s) {
+    final t = s.trim();
+    if (t.isEmpty) return '';
+    return t.characters.first;
+  }
+
+  String _initials({required String firstName, required String lastName}) {
+    final a = _firstLetter(firstName);
+    final b = _firstLetter(lastName);
+    return (a + b).toUpperCase();
+  }
+
+  String _month2(DateTime? d) {
+    if (d == null) return '';
+    final m = d.month;
+    return m < 10 ? '0$m' : '$m';
+  }
+
+  String _buildChildCode(ChildFormState child) {
+    final childInit = _initials(firstName: child.firstName, lastName: child.lastName);
+    final parentInit = _initials(firstName: state.firstName, lastName: state.lastName);
+    final mm = _month2(child.birthDate);
+
+    if (childInit.isEmpty || parentInit.isEmpty || mm.isEmpty) return '';
+    return '$childInit-$parentInit-$mm';
+  }
+
   @override
   ParentFormState build() {
     _validateParent = ValidateParentUseCase();
@@ -16,8 +46,22 @@ class ParentFormController extends Notifier<ParentFormState> {
     return const ParentFormState();
   }
 
-  void setFirstName(String v) => state = state.copyWith(firstName: v);
-  void setLastName(String v) => state = state.copyWith(lastName: v);
+  void setFirstName(String v) {
+    state = state.copyWith(firstName: v);
+    _recomputeAllChildrenCodes();
+  }
+
+  void setLastName(String v) {
+    state = state.copyWith(lastName: v);
+    _recomputeAllChildrenCodes();
+  }
+
+  void _recomputeAllChildrenCodes() {
+    final updated = state.children
+        .map((c) => c.copyWith(code: _buildChildCode(c)))
+        .toList();
+    state = state.copyWith(children: updated);
+  }
   void setEmail(String v) => state = state.copyWith(email: v);
   void setPhone(String v) => state = state.copyWith(phone: v);
   void setBirthDate(DateTime v) => state = state.copyWith(birthDate: v);
@@ -36,9 +80,18 @@ class ParentFormController extends Notifier<ParentFormState> {
   void setOccupation(String v) => state = state.copyWith(occupation: v);
   void setObservations(String v) => state = state.copyWith(observations: v);
 
+  void _recomputeChildCodeAt(int index) {
+    final next = [...state.children];
+    final c = next[index];
+    next[index] = c.copyWith(code: _buildChildCode(c));
+    state = state.copyWith(children: next);
+  }
+
   void addChild() {
-    final newChild = ChildFormState.empty();
-    state = state.copyWith(children: [...state.children, newChild]);
+    final id = _newChildId();
+    final newChild = ChildFormState.empty(id);
+    final withCode = newChild.copyWith(code: _buildChildCode(newChild));
+    state = state.copyWith(children: [...state.children, withCode]);
   }
 
   void removeChild(int index) {
@@ -50,23 +103,26 @@ class ParentFormController extends Notifier<ParentFormState> {
     final next = [...state.children];
     next[index] = next[index].copyWith(firstName: v);
     state = state.copyWith(children: next);
+    _recomputeChildCodeAt(index);
   }
 
   void setChildLastName(int index, String v) {
     final next = [...state.children];
     next[index] = next[index].copyWith(lastName: v);
     state = state.copyWith(children: next);
-  }
-
-  void setChildAge(int index, int? v) {
-    final next = [...state.children];
-    next[index] = next[index].copyWith(age: v);
-    state = state.copyWith(children: next);
+    _recomputeChildCodeAt(index);
   }
 
   void setChildBirthDate(int index, DateTime v) {
     final next = [...state.children];
     next[index] = next[index].copyWith(birthDate: v);
+    state = state.copyWith(children: next);
+    _recomputeChildCodeAt(index);
+  }
+
+  void setChildAge(int index, int? v) {
+    final next = [...state.children];
+    next[index] = next[index].copyWith(age: v);
     state = state.copyWith(children: next);
   }
 
