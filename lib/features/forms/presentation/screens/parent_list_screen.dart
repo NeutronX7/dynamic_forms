@@ -60,7 +60,13 @@ class _ParentTile extends ConsumerWidget {
           children: [
             if (p.email.trim().isNotEmpty) Text(p.email),
             const SizedBox(height: 4),
-            Text('Hijos: ${p.children.length}'),
+            Row(
+              children: [
+                const Icon(Icons.child_care),
+                const SizedBox(width: 8),
+                Text('Hijos: ${p.children.length}')
+              ],
+            )
           ],
         ),
         trailing: Row(

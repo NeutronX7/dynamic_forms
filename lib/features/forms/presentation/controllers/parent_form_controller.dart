@@ -85,9 +85,19 @@ class ParentFormController extends Notifier<ParentFormState> {
   }
 
   void removeChild(int index) {
+    if (state.children.length <= 1) {
+      state = state.copyWith(errors: {
+        ...state.errors,
+        'children': 'Debe existir al menos un hijo, debes de crear otro nuevo',
+      });
+      return;
+    }
+
     final next = [...state.children]..removeAt(index);
-    state = state.copyWith(children: next);
-    _recomputeCodes();
+    state = state.copyWith(
+      children: next,
+      errors: {...state.errors}..remove('children'),
+    );
   }
 
   void setChildFirstName(int index, String v) => _patchChild(index, (c) => c.copyWith(firstName: v));

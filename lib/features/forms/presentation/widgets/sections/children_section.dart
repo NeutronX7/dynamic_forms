@@ -67,6 +67,7 @@ class ChildrenSection extends ConsumerWidget {
                   index: index,
                   childNumber: index + 1,
                   child: child,
+                  totalChildren: form.children.length,
                 ),
               );
             })
@@ -81,17 +82,20 @@ class _ChildFormTile extends ConsumerWidget {
   final int index;
   final int childNumber;
   final ChildFormState child;
+  final int totalChildren;
 
   const _ChildFormTile({
     required this.index,
     required this.childNumber,
     required this.child,
+    required this.totalChildren
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.read(parentFormControllerProvider.notifier);
     final hasCode = child.code.trim().isNotEmpty;
+    final canDelete = totalChildren > 1;
 
     final firstNameC = ref.watch(textControllerProvider('child:${child.id}:firstName'));
     final lastNameC  = ref.watch(textControllerProvider('child:${child.id}:lastName'));
@@ -106,8 +110,8 @@ class _ChildFormTile extends ConsumerWidget {
           hasCode ? 'Código generado' : 'Completa nombre, apellido y fecha para generar el código',
         ),
         trailing: IconButton(
-          tooltip: 'Eliminar hijo',
-          onPressed: () => controller.removeChild(index),
+          tooltip: canDelete ? 'Eliminar hijo' : 'No puedes eliminar el último hijo',
+          onPressed: canDelete ? () => controller.removeChild(index) : null,
           icon: const Icon(Icons.delete_outline),
         ),
         childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
