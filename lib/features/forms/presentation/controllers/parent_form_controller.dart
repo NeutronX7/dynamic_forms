@@ -35,6 +35,8 @@ class ParentFormController extends Notifier<ParentFormState> {
     return const ParentFormState();
   }
 
+  bool get canEditGender => state.relationship == 'Tutor';
+
   void setFirstName(String v) {
     state = state.copyWith(firstName: v);
     _recomputeCodes();
@@ -50,8 +52,21 @@ class ParentFormController extends Notifier<ParentFormState> {
   void setBirthDate(DateTime v) => state = state.copyWith(birthDate: v);
   void setDocumentId(String v) => state = state.copyWith(documentId: v);
 
-  void setRelationship(String v) => state = state.copyWith(relationship: v);
-  void setGender(String v) => state = state.copyWith(gender: v);
+  void setRelationship(String v) {
+    var next = state.copyWith(relationship: v);
+
+    if (v == 'Padre') {
+      next = next.copyWith(gender: 'Masculino');
+    } else if (v == 'Madre') {
+      next = next.copyWith(gender: 'Femenino');
+    }
+
+    state = next;
+  }
+  void setGender(String v) {
+    if (!canEditGender) return;
+    state = state.copyWith(gender: v);
+  }
   void setIsMarried(bool v) => state = state.copyWith(isMarried: v);
   void setOccupation(String v) => state = state.copyWith(occupation: v);
   void setObservations(String v) => state = state.copyWith(observations: v);

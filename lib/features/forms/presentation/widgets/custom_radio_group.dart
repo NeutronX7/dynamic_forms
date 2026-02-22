@@ -6,6 +6,7 @@ class CustomRadioGroup extends StatelessWidget {
   final List<String> options;
   final ValueChanged<String> onChanged;
   final String? errorText;
+  final bool enabled;
 
   const CustomRadioGroup({
     super.key,
@@ -14,6 +15,7 @@ class CustomRadioGroup extends StatelessWidget {
     required this.options,
     required this.onChanged,
     this.errorText,
+    this.enabled = true,
   });
 
   @override
@@ -28,9 +30,11 @@ class CustomRadioGroup extends StatelessWidget {
             title: Text(opt),
             value: opt,
             groupValue: groupValue,
-            onChanged: (v) {
+            onChanged: enabled
+                ? (v) {
               if (v != null) onChanged(v);
-            },
+            }
+                : null,
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),

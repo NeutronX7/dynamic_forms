@@ -97,6 +97,7 @@ class _OptionalFieldsTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final form = ref.watch(parentFormControllerProvider);
     final controller = ref.read(parentFormControllerProvider.notifier);
+    final genderEnabled = form.relationship == 'Tutor';
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -127,6 +128,7 @@ class _OptionalFieldsTile extends ConsumerWidget {
             label: 'Género',
             groupValue: form.gender,
             options: const ['Masculino', 'Femenino'],
+            enabled: genderEnabled,
             onChanged: controller.setGender,
             errorText: form.errors['gender'],
           ),
