@@ -1,15 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../domain/usecases/validate_children_usecase.dart';
 import '../../domain/usecases/validate_parent_usecase.dart';
 import '../models/child_form_state.dart';
 import '../models/parent_form_state.dart';
 
 class ParentFormController extends Notifier<ParentFormState> {
-  late final ValidateParentUseCase _validate;
+  late final ValidateParentUseCase _validateParent;
+  late final ValidateChildrenUsecase _validateChildren;
 
   @override
   ParentFormState build() {
-    _validate = ValidateParentUseCase();
+    _validateParent = ValidateParentUseCase();
+    _validateChildren = ValidateChildrenUsecase();
     return const ParentFormState();
   }
 
@@ -74,7 +77,7 @@ class ParentFormController extends Notifier<ParentFormState> {
   }
 
   bool validate() {
-    final result = _validate(
+    final parentResult = _validateParent(
       firstName: state.firstName,
       lastName: state.lastName,
       email: state.email,
@@ -85,9 +88,27 @@ class ParentFormController extends Notifier<ParentFormState> {
       gender: state.gender,
       contactChannels: state.contactChannels,
       occupation: state.occupation,
-      children: state.children
+      children: state.children.length,
     );
-    state = state.copyWith(errors: result.errors);
-    return result.isValid;
+
+    final updatedChildren = state.children.map((c) {
+      final r = _validateChildren(
+        firstName: c.firstName,
+        lastName: c.lastName,
+        age: c.age,
+        birthDate: c.birthDate,
+        hairColor: c.hairColor,
+      );
+      return c.copyWith(errors: r.errors);
+    }).toList();
+
+    final childrenValid = updatedChildren.every((c) => c.errors.values.every((e) => e == null));
+
+    state = state.copyWith(
+      errors: parentResult.errors,
+      children: updatedChildren,
+    );
+
+    return parentResult.isValid && childrenValid;
   }
 }

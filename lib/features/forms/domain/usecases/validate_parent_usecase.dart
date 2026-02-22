@@ -1,7 +1,6 @@
 import 'package:dynamic_forms/core/validators/validate_children.dart';
 
 import '../../../../core/validators/validators.dart';
-import '../../presentation/models/child_form_state.dart';
 
 class ParentValidationResult {
   final Map<String, String?> errors;
@@ -22,7 +21,7 @@ class ValidateParentUseCase {
     String? gender,
     Set<String>? contactChannels,
     String? occupation,
-    required List<ChildFormState> children
+    required int children
   }) {
     final errors = <String, String?>{
       'firstName': requiredValidator(firstName, message: 'Nombre obligatorio'),

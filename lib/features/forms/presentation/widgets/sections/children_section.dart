@@ -12,6 +12,7 @@ class ChildrenSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final form = ref.watch(parentFormControllerProvider);
     final controller = ref.read(parentFormControllerProvider.notifier);
+    final childrenError = form.errors['children'];
 
     return Card(
       child: Padding(
@@ -43,11 +44,14 @@ class ChildrenSection extends ConsumerWidget {
               ),
             ),
 
-            if (form.children.isEmpty) ...[
+            if (childrenError != null) ...[
               const SizedBox(height: 12),
               Text(
-                'Debes registrar a un hijo o persona de la que estás encargado',
-                style: Theme.of(context).textTheme.bodySmall,
+                childrenError,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.error,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
 

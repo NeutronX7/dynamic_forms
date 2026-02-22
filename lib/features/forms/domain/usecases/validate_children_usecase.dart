@@ -11,15 +11,17 @@ class ValidateChildrenUsecase {
   ChildrenValidationResult call({
     required String firstName,
     required String lastName,
-    required int age,
+    required int? age,
     required DateTime? birthDate,
     required String hairColor,
-    String? gender
+    String? gender,
   }) {
     final errors = <String, String?>{
       'firstName': requiredValidator(firstName, message: 'Nombre obligatorio'),
       'lastName': requiredValidator(lastName, message: 'Apellido obligatorio'),
+      'age': requiredIntValidator(age, message: 'Edad requerida'),
       'birthDate': childBirthdate(birthDate),
+      'hairColor': requiredValidator(hairColor, message: 'Color de pelo es requisito'),
     };
 
     return ChildrenValidationResult(errors);
