@@ -11,23 +11,16 @@ class CustomFormButtom extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return FilledButton(
-      onPressed: () {
-        final ok = controller.validate();
+      onPressed: () async {
+        final ok = await controller.save();
+        if (!ok) return;
 
-        if (!ok) {
+        if (context.mounted) {
+          Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Todos los campos son obligatorios'),
-            ),
+            const SnackBar(content: Text('Guardado correctamente')),
           );
-          return;
         }
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Formulario válido'),
-          ),
-        );
       },
       child: const Text('Guardar'),
     );

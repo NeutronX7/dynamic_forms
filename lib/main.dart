@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'core/routes/app_routes.dart';
+import 'features/forms/data/local/models/records.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+
+  Hive.registerAdapter(ParentRecordAdapter());
+  Hive.registerAdapter(ChildRecordAdapter());
+
+  await Hive.openBox<ParentRecord>('parents');
+
   runApp(const ProviderScope(child: MyApp()));
 }
 

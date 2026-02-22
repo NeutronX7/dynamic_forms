@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/local/hive_providers.dart';
+import '../../data/local/models/records.dart';
 import '../../domain/usecases/validate_children_usecase.dart';
 import '../../domain/usecases/validate_parent_usecase.dart';
 import '../models/child_form_state.dart';
@@ -9,6 +11,8 @@ import '../models/parent_form_state.dart';
 class ParentFormController extends Notifier<ParentFormState> {
   late final ValidateParentUseCase _validateParent;
   late final ValidateChildrenUsecase _validateChildren;
+
+  String _newParentId() => DateTime.now().microsecondsSinceEpoch.toString();
 
   String _newChildId() => DateTime.now().microsecondsSinceEpoch.toString();
 
@@ -130,6 +134,56 @@ class ParentFormController extends Notifier<ParentFormState> {
     final next = [...state.children];
     next[index] = next[index].copyWith(hairColor: v);
     state = state.copyWith(children: next);
+  }
+
+  Future<bool> save() async {
+    final ok = validate();
+    if (!ok) return false;
+
+    final now = DateTime.now();
+    final parentId = state.id.isEmpty ? _newParentId() : state.id;
+
+    _recomputeAllChildrenCodes();
+
+    final record = ParentRecord(
+      id: parentId,
+      firstName: state.firstName,
+      lastName: state.lastName,
+      email: state.email,
+      phone: state.phone,
+      birthDate: state.birthDate,
+      documentId: state.documentId,
+      relationship: state.relationship,
+      gender: state.gender,
+      contactChannels: state.contactChannels.toList(),
+      isMarried: state.isMarried,
+      occupation: state.occupation,
+      observations: state.observations,
+      children: state.children.map((c) {
+        return ChildRecord(
+          id: c.id,
+          firstName: c.firstName,
+          lastName: c.lastName,
+          age: c.age,
+          birthDate: c.birthDate,
+          hairColor: c.hairColor,
+          code: c.code,
+        );
+      }).toList(),
+      createdAt: state.createdAt ?? now,
+      updatedAt: now,
+    );
+
+    final box = ref.read(parentsBoxProvider);
+    await box.put(record.id, record);
+
+    state = state.copyWith(
+      id: parentId,
+      createdAt: state.createdAt ?? now,
+      updatedAt: now,
+    );
+
+    return true;
   }
 
   bool validate() {

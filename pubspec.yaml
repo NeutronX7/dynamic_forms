@@ -36,6 +36,7 @@ dependencies:
   # Local DB (Hive)
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  path_provider: ^2.1.2
 
   # Utils
   uuid: ^4.4.0
