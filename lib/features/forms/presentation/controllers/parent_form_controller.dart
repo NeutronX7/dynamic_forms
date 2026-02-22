@@ -20,31 +20,56 @@ class ParentFormController extends Notifier<ParentFormState> {
 
   bool isLoadedFor(String id) => _loadedParentId == id;
 
-  String _firstLetter(String s) {
-    final t = s.trim();
-    if (t.isEmpty) return '';
-    return t.characters.first;
-  }
-
-  String _initials({required String firstName, required String lastName}) {
-    final a = _firstLetter(firstName);
-    final b = _firstLetter(lastName);
-    return (a + b).toUpperCase();
-  }
-
   String _month2(DateTime? d) {
     if (d == null) return '';
     final m = d.month;
     return m < 10 ? '0$m' : '$m';
   }
 
-  String _buildChildCode(ChildFormState child) {
-    final childInit = _initials(firstName: child.firstName, lastName: child.lastName);
-    final parentInit = _initials(firstName: state.firstName, lastName: state.lastName);
+  String _nthLetter(String s, int n) {
+    final t = s.trim();
+    if (t.isEmpty) return '';
+    final chars = t.characters.toList();
+    if (n < chars.length) return chars[n];
+    return chars.first;
+  }
+
+  String _initialsNth({
+    required String firstName,
+    required String lastName,
+    required int n,
+  }) {
+    final a = _nthLetter(firstName, n);
+    final b = _nthLetter(lastName, n);
+    return (a + b).toUpperCase();
+  }
+
+  String _buildChildCodeBase(ChildFormState child) {
+    final childInit = _initialsNth(firstName: child.firstName, lastName: child.lastName, n: 0);
+    final parentInit = _initialsNth(firstName: state.firstName, lastName: state.lastName, n: 0);
     final mm = _month2(child.birthDate);
 
     if (childInit.isEmpty || parentInit.isEmpty || mm.isEmpty) return '';
     return '$childInit-$parentInit-$mm';
+  }
+
+  String _buildChildCodeRecalc(ChildFormState child) {
+    final childInit = _initialsNth(firstName: child.firstName, lastName: child.lastName, n: 1);
+    final parentInit = _initialsNth(firstName: state.firstName, lastName: state.lastName, n: 1);
+    final mm = _month2(child.birthDate);
+
+    if (childInit.isEmpty || parentInit.isEmpty || mm.isEmpty) return '';
+    return '$childInit-$parentInit-$mm';
+  }
+
+  bool _hasDuplicateCodes(List<ChildFormState> children) {
+    final seen = <String>{};
+    for (final c in children) {
+      final code = c.code.trim();
+      if (code.isEmpty) continue;
+      if (!seen.add(code)) return true;
+    }
+    return false;
   }
 
   @override
@@ -64,12 +89,46 @@ class ParentFormController extends Notifier<ParentFormState> {
     _recomputeAllChildrenCodes();
   }
 
-  void _recomputeAllChildrenCodes() {
-    final updated = state.children
-        .map((c) => c.copyWith(code: _buildChildCode(c)))
+  ({List<ChildFormState> children, bool blocked}) _resolveDuplicateCodesOnce() {
+    var next = state.children
+        .map((c) => c.copyWith(code: _buildChildCodeBase(c)))
         .toList();
-    state = state.copyWith(children: updated);
+
+    final groups = <String, List<int>>{};
+    for (var i = 0; i < next.length; i++) {
+      final code = next[i].code.trim();
+      if (code.isEmpty) continue;
+      groups.putIfAbsent(code, () => []).add(i);
+    }
+
+    for (final entry in groups.entries) {
+      final idxs = entry.value;
+      if (idxs.length <= 1) continue;
+
+      for (var k = 1; k < idxs.length; k++) {
+        final i = idxs[k];
+        final c = next[i];
+        next[i] = c.copyWith(code: _buildChildCodeRecalc(c));
+      }
+    }
+
+    final seen = <String>{};
+    for (final c in next) {
+      final code = c.code.trim();
+      if (code.isEmpty) continue;
+      if (!seen.add(code)) {
+        return (children: next, blocked: true);
+      }
+    }
+
+    return (children: next, blocked: false);
   }
+
+  void _recomputeAllChildrenCodes() {
+    final resolved = _resolveDuplicateCodesOnce();
+    state = state.copyWith(children: resolved.children);
+  }
+
   void setEmail(String v) => state = state.copyWith(email: v);
   void setPhone(String v) => state = state.copyWith(phone: v);
   void setBirthDate(DateTime v) => state = state.copyWith(birthDate: v);
@@ -89,16 +148,13 @@ class ParentFormController extends Notifier<ParentFormState> {
   void setObservations(String v) => state = state.copyWith(observations: v);
 
   void _recomputeChildCodeAt(int index) {
-    final next = [...state.children];
-    final c = next[index];
-    next[index] = c.copyWith(code: _buildChildCode(c));
-    state = state.copyWith(children: next);
+    _recomputeAllChildrenCodes();
   }
 
   void addChild() {
     final id = _newChildId();
     final newChild = ChildFormState.empty(id);
-    final withCode = newChild.copyWith(code: _buildChildCode(newChild));
+    final withCode = newChild.copyWith(code: _buildChildCodeBase(newChild));
     state = state.copyWith(children: [...state.children, withCode]);
   }
 
@@ -144,10 +200,19 @@ class ParentFormController extends Notifier<ParentFormState> {
     final ok = validate();
     if (!ok) return false;
 
+    final resolved = _resolveDuplicateCodesOnce();
+    state = state.copyWith(children: resolved.children);
+
+    if (_hasDuplicateCodes(state.children)) {
+      state = state.copyWith(errors: {
+        ...state.errors,
+        'children': 'Hay código duplicado con dos hijos, si tiene 3 hijos, puede ingrsar otro nombre o usar otro apellido',
+      });
+      return false;
+    }
+
     final now = DateTime.now();
     final parentId = state.id.isEmpty ? _newParentId() : state.id;
-
-    _recomputeAllChildrenCodes();
 
     final record = ParentRecord(
       id: parentId,
@@ -163,17 +228,15 @@ class ParentFormController extends Notifier<ParentFormState> {
       isMarried: state.isMarried,
       occupation: state.occupation,
       observations: state.observations,
-      children: state.children.map((c) {
-        return ChildRecord(
-          id: c.id,
-          firstName: c.firstName,
-          lastName: c.lastName,
-          age: c.age,
-          birthDate: c.birthDate,
-          hairColor: c.hairColor,
-          code: c.code,
-        );
-      }).toList(),
+      children: state.children.map((c) => ChildRecord(
+        id: c.id,
+        firstName: c.firstName,
+        lastName: c.lastName,
+        age: c.age,
+        birthDate: c.birthDate,
+        hairColor: c.hairColor,
+        code: c.code,
+      )).toList(),
       createdAt: state.createdAt ?? now,
       updatedAt: now,
     );
