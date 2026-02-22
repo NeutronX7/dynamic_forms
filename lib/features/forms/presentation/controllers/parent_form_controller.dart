@@ -35,7 +35,6 @@ class ParentFormController extends Notifier<ParentFormState> {
     return const ParentFormState();
   }
 
-  // ---------- Parent setters ----------
   void setFirstName(String v) {
     state = state.copyWith(firstName: v);
     _recomputeCodes();
@@ -63,7 +62,6 @@ class ParentFormController extends Notifier<ParentFormState> {
     state = state.copyWith(contactChannels: next);
   }
 
-  // ---------- Children ----------
   void addChild() {
     final id = _newChildId();
     final newChild = ChildFormState.empty(id).copyWith(hairColor: 'Castaño');
@@ -102,7 +100,6 @@ class ParentFormController extends Notifier<ParentFormState> {
 
     state = state.copyWith(children: resolved.children);
 
-    // opcional: error en vivo
     if (resolved.blocked) {
       state = state.copyWith(errors: {
         ...state.errors,
@@ -111,7 +108,6 @@ class ParentFormController extends Notifier<ParentFormState> {
     }
   }
 
-  // ---------- Save / Load ----------
   Future<bool> save() async {
     final ok = validate();
     if (!ok) return false;
@@ -131,7 +127,6 @@ class ParentFormController extends Notifier<ParentFormState> {
       return false;
     }
 
-    // unicidad con repo (mejor que recorrer box aquí)
     if (_repo.documentIdExists(state.documentId, excludeParentId: state.id.isEmpty ? null : state.id)) {
       state = state.copyWith(errors: {
         ...state.errors,
@@ -148,7 +143,6 @@ class ParentFormController extends Notifier<ParentFormState> {
       return false;
     }
 
-    // redundante si ya bloqueas arriba, pero si lo quieres:
     if (_codeService.hasDuplicateCodes(state.children)) {
       state = state.copyWith(errors: {
         ...state.errors,
