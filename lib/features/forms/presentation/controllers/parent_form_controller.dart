@@ -20,6 +20,18 @@ class ParentFormController extends Notifier<ParentFormState> {
 
   bool isLoadedFor(String id) => _loadedParentId == id;
 
+  int _calcAge(DateTime birthDate, DateTime now) {
+    var age = now.year - birthDate.year;
+
+    final hasHadBirthdayThisYear =
+        (now.month > birthDate.month) ||
+            (now.month == birthDate.month && now.day >= birthDate.day);
+
+    if (!hasHadBirthdayThisYear) age--;
+
+    return age < 0 ? 0 : age;
+  }
+
   String _month2(DateTime? d) {
     if (d == null) return '';
     final m = d.month;
@@ -131,6 +143,21 @@ class ParentFormController extends Notifier<ParentFormState> {
 
   void setEmail(String v) => state = state.copyWith(email: v);
   void setPhone(String v) => state = state.copyWith(phone: v);
+  bool _phoneNumberExists(String phone) {
+    final phNmb = phone.trim();
+    if (phNmb.isEmpty) return false;
+
+    final box = ref.read(parentsBoxProvider);
+
+    for (final p in box.values) {
+      if (state.id.isNotEmpty && p.id == state.id) continue;
+
+      if (p.phone.trim() == phNmb) return true;
+    }
+
+    return false;
+  }
+
   void setBirthDate(DateTime v) => state = state.copyWith(birthDate: v);
   void setDocumentId(String v) => state = state.copyWith(documentId: v);
   bool _documentIdExistsInOtherParent(String documentId) {
@@ -167,7 +194,7 @@ class ParentFormController extends Notifier<ParentFormState> {
 
   void addChild() {
     final id = _newChildId();
-    final newChild = ChildFormState.empty(id);
+    final newChild = ChildFormState.empty(id).copyWith(hairColor: 'Castaño');
     final withCode = newChild.copyWith(code: _buildChildCodeBase(newChild));
     state = state.copyWith(children: [...state.children, withCode]);
   }
@@ -192,9 +219,16 @@ class ParentFormController extends Notifier<ParentFormState> {
   }
 
   void setChildBirthDate(int index, DateTime v) {
+    final now = DateTime.now();
+    final age = _calcAge(v, now);
+
     final next = [...state.children];
-    next[index] = next[index].copyWith(birthDate: v);
+    next[index] = next[index].copyWith(
+      birthDate: v,
+      age: age,
+    );
     state = state.copyWith(children: next);
+
     _recomputeChildCodeAt(index);
   }
 
@@ -225,6 +259,13 @@ class ParentFormController extends Notifier<ParentFormState> {
       return false;
     }
 
+    if (_phoneNumberExists(state.phone)) {
+      state = state.copyWith(errors: {
+        ...state.errors,
+        'phone': 'Este numero de teléfono ya está registrado',
+      });
+      return false;
+    }
 
     if (_hasDuplicateCodes(state.children)) {
       state = state.copyWith(errors: {

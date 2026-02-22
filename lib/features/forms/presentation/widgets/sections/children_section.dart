@@ -2,6 +2,7 @@ import 'package:dynamic_forms/features/forms/presentation/models/child_form_stat
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../core/constants/const_values.dart';
 import '../../controllers/parent_form_providers.dart';
 import '../../widgets/widgets.dart';
 
@@ -95,7 +96,6 @@ class _ChildFormTile extends ConsumerWidget {
     final firstNameC = ref.watch(textControllerProvider('child:${child.id}:firstName'));
     final lastNameC  = ref.watch(textControllerProvider('child:${child.id}:lastName'));
     final ageC       = ref.watch(textControllerProvider('child:${child.id}:age'));
-    final hairC      = ref.watch(textControllerProvider('child:${child.id}:hairColor'));
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -134,17 +134,6 @@ class _ChildFormTile extends ConsumerWidget {
             onChanged: (v) => controller.setChildLastName(index, v),
           ),
           const SizedBox(height: 12),
-          CustomTextField(
-            label: 'Edad *',
-            value: child.age?.toString() ?? '',
-            controller: ageC,
-            keyboardType: TextInputType.number,
-            onlyDigits: true,
-            errorText: child.errors['age'],
-            onChanged: (v) => controller.setChildAge(index, int.tryParse(v)),
-          ),
-          const SizedBox(height: 12),
-
           CustomDateField(
             label: 'Fecha de nacimiento *',
             value: child.birthDate,
@@ -161,11 +150,21 @@ class _ChildFormTile extends ConsumerWidget {
             },
           ),
           const SizedBox(height: 12),
-
           CustomTextField(
+            label: 'Edad *',
+            value: child.age?.toString() ?? '',
+            controller: ageC,
+            enabled: false,
+            keyboardType: TextInputType.number,
+            onlyDigits: true,
+            errorText: child.errors['age'],
+            onChanged: (v) => controller.setChildAge(index, int.tryParse(v)),
+          ),
+          const SizedBox(height: 12),
+          CustomRadioGroup(
             label: 'Color de pelo *',
-            value: child.hairColor,
-            controller: hairC,
+            groupValue: child.hairColor.isNotEmpty ? child.hairColor : hairColors.first,
+            options: hairColors,
             errorText: child.errors['hairColor'],
             onChanged: (v) => controller.setChildHairColor(index, v),
           ),

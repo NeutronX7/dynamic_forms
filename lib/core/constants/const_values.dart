@@ -12,3 +12,5 @@ const occupations = [
 ];
 
 const contactOptions = ['WhatsApp', 'Email', 'Llamada'];
+
+const hairColors = ['Castaño', 'Rubio', 'Negro', 'Pelirrojo'];

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 class CustomTextField extends StatelessWidget {
   final String label;
   final String value;
+  final bool? enabled;
   final String? errorText;
   final String? hintText;
   final TextInputType keyboardType;
@@ -19,6 +20,7 @@ class CustomTextField extends StatelessWidget {
     required this.value,
     required this.onChanged,
     required this.controller,
+    this.enabled,
     this.errorText,
     this.hintText,
     this.keyboardType = TextInputType.text,
@@ -40,6 +42,7 @@ class CustomTextField extends StatelessWidget {
     return TextField(
       controller: controller,
       onChanged: onChanged,
+      enabled: enabled,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
       maxLines: maxLines,
