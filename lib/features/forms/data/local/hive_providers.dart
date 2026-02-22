@@ -8,6 +8,6 @@ final parentsBoxProvider = Provider<Box<ParentRecord>>((ref) {
   return Hive.box<ParentRecord>('parents');
 });
 
-final parentsRepositoryProvider = Provider<ParentsRepository>((ref) {
-  return ParentsRepository(ref.watch(parentsBoxProvider));
+final parentsRepositoryProvider = Provider<ParentsRepositoryHive>((ref) {
+  return ParentsRepositoryHive(ref.watch(parentsBoxProvider));
 });

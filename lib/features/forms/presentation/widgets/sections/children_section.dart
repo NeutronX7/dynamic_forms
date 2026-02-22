@@ -157,8 +157,8 @@ class _ChildFormTile extends ConsumerWidget {
             enabled: false,
             keyboardType: TextInputType.number,
             onlyDigits: true,
+            onChanged: null,
             errorText: child.errors['age'],
-            onChanged: (v) => controller.setChildAge(index, int.tryParse(v)),
           ),
           const SizedBox(height: 12),
           CustomRadioGroup(

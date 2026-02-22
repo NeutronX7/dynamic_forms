@@ -11,7 +11,7 @@ class CustomTextField extends StatelessWidget {
   final TextInputAction textInputAction;
   final int maxLines;
   final bool onlyDigits;
-  final ValueChanged<String> onChanged;
+  final ValueChanged<String>? onChanged;
   final TextEditingController controller;
 
   const CustomTextField({
