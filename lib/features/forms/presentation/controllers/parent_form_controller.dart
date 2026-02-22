@@ -3,13 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/local/hive_providers.dart';
 import '../../data/mappers/parent_record_mapper.dart';
 import '../../data/repositories/parents_repository.dart';
-import '../../domain/services/age_service.dart';
-import '../../domain/services/child_code_service.dart';
-import '../../domain/services/services_provider.dart';
-import '../../domain/usecases/validate_children_usecase.dart';
-import '../../domain/usecases/validate_parent_usecase.dart';
-import '../models/child_form_state.dart';
-import '../models/parent_form_state.dart';
+import '../../domain/services/services.dart';
+import '../../domain/usecases/usecases.dart';
+import '../models/states.dart';
 
 class ParentFormController extends Notifier<ParentFormState> {
   late final ValidateParentUseCase _validateParent;
