@@ -77,12 +77,53 @@ class ParentListScreen extends ConsumerWidget {
                           );
 
                           if (confirm == true) {
+                            final deleted = ParentRecord(
+                              id: p.id,
+                              firstName: p.firstName,
+                              lastName: p.lastName,
+                              email: p.email,
+                              phone: p.phone,
+                              birthDate: p.birthDate,
+                              documentId: p.documentId,
+                              relationship: p.relationship,
+                              gender: p.gender,
+                              contactChannels: p.contactChannels,
+                              isMarried: p.isMarried,
+                              occupation: p.occupation,
+                              observations: p.observations,
+                              children: p.children.map((c) {
+                                return ChildRecord(
+                                  id: c.id,
+                                  firstName: c.firstName,
+                                  lastName: c.lastName,
+                                  age: c.age,
+                                  birthDate: c.birthDate,
+                                  hairColor: c.hairColor,
+                                  code: c.code,
+                                );
+                              }).toList(),
+                              createdAt: p.createdAt,
+                              updatedAt: p.updatedAt,
+                            );
+
                             await box.delete(p.id);
 
                             if (!context.mounted) return;
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Responsable eliminado')),
+                            final messenger = ScaffoldMessenger.of(context);
+                            messenger.hideCurrentSnackBar();
+
+                            messenger.showSnackBar(
+                              SnackBar(
+                                content: Text('Responsable eliminado: ${p.firstName} ${p.lastName}'),
+                                duration: const Duration(seconds: 5),
+                                action: SnackBarAction(
+                                  label: 'DESHACER',
+                                  onPressed: () async {
+                                    await box.put(deleted.id, deleted);
+                                  },
+                                ),
+                              ),
                             );
                           }
                         },
