@@ -4,20 +4,31 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../controllers/parent_form_providers.dart';
 import '../widgets/widgets.dart';
 
-class ParentFormScreen extends ConsumerWidget {
+class ParentFormScreen extends ConsumerStatefulWidget {
   final String? parentId;
   const ParentFormScreen({super.key, this.parentId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final controller = ref.read(parentFormControllerProvider.notifier);
+  ConsumerState<ParentFormScreen> createState() => _ParentFormScreenState();
+}
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final id = parentId;
-      if (id == null) return;
-      if (controller.isLoadedFor(id)) return;
-      controller.loadForEdit(id);
-    });
+class _ParentFormScreenState extends ConsumerState<ParentFormScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    final id = widget.parentId;
+    if (id != null) {
+      Future.microtask(() {
+        ref.read(parentFormControllerProvider.notifier).loadForEdit(id);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final parentId = widget.parentId;
 
     return Scaffold(
       appBar: AppBar(
@@ -27,11 +38,11 @@ class ParentFormScreen extends ConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: ListView(
-            children: [
-              const ParentFieldsSection(),
-              const SizedBox(height: 16),
-              const ChildrenSection(),
-              const SizedBox(height: 16),
+            children: const [
+              ParentFieldsSection(),
+              SizedBox(height: 16),
+              ChildrenSection(),
+              SizedBox(height: 16),
               CustomFormButton(),
             ],
           ),
