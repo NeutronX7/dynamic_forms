@@ -1,29 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../controllers/parent_form_controller.dart';
+import '../controllers/parent_form_providers.dart';
 
-class CustomFormButtom extends ConsumerWidget {
-  final ParentFormController controller;
-
-  const CustomFormButtom({super.key, required this.controller});
+class CustomFormButton extends ConsumerWidget {
+  const CustomFormButton({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return FilledButton(
-      onPressed: () async {
-        final ok = await controller.save();
-        if (!ok) return;
+    final form = ref.watch(parentFormControllerProvider);
+    final controller = ref.read(parentFormControllerProvider.notifier);
 
-        if (context.mounted) {
-          Navigator.pop(context);
+    final isEditing = form.id.isNotEmpty;
+
+    return SizedBox(
+      width: double.infinity,
+      child: FilledButton.icon(
+        icon: Icon(isEditing ? Icons.save_outlined : Icons.check_circle_outline),
+        label: Text(isEditing ? 'Actualizar' : 'Guardar'),
+        onPressed: () async {
+          final ok = await controller.save();
+          if (!ok) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Revisa los campos del formulario')),
+            );
+            return;
+          }
+
+          if (!context.mounted) return;
+
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Guardado correctamente')),
+            SnackBar(content: Text(isEditing ? 'Actualizado' : 'Guardado')),
           );
-        }
-      },
-      child: const Text('Guardar'),
+
+          Navigator.pop(context);
+        },
+      ),
     );
   }
-
 }

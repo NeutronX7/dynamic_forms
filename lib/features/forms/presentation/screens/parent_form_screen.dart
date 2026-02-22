@@ -5,35 +5,34 @@ import '../controllers/parent_form_providers.dart';
 import '../widgets/widgets.dart';
 
 class ParentFormScreen extends ConsumerWidget {
-  const ParentFormScreen({super.key});
+  final String? parentId;
+  const ParentFormScreen({super.key, this.parentId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final form = ref.watch(parentFormControllerProvider);
     final controller = ref.read(parentFormControllerProvider.notifier);
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final id = parentId;
+      if (id == null) return;
+      if (controller.isLoadedFor(id)) return;
+      controller.loadForEdit(id);
+    });
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Nuevo responsable')),
+      appBar: AppBar(
+        title: Text(parentId == null ? 'Nuevo responsable' : 'Editar responsable'),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: ListView(
             children: [
-
-              // Where the form for parent is
-              ParentFieldsSection(
-                form: form,
-                controller: controller,
-              ),
-
+              const ParentFieldsSection(),
               const SizedBox(height: 16),
-
-              // This is the children section
               const ChildrenSection(),
-
               const SizedBox(height: 16),
-
-              CustomFormButtom(controller: controller),
+              CustomFormButton(),
             ],
           ),
         ),

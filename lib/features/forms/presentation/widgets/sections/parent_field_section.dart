@@ -8,14 +8,7 @@ import '../../models/parent_form_state.dart';
 import '../widgets.dart';
 
 class ParentFieldsSection extends ConsumerWidget {
-  final ParentFormState form;
-  final ParentFormController controller;
-
-  const ParentFieldsSection({
-    super.key,
-    required this.form,
-    required this.controller,
-  });
+  const ParentFieldsSection({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,7 +32,6 @@ class ParentFieldsSection extends ConsumerWidget {
           onChanged: controller.setFirstName,
         ),
         const SizedBox(height: 12),
-
         CustomTextField(
           label: 'Apellido *',
           value: form.lastName,
@@ -48,7 +40,6 @@ class ParentFieldsSection extends ConsumerWidget {
           onChanged: controller.setLastName,
         ),
         const SizedBox(height: 12),
-
         CustomTextField(
           label: 'Email *',
           value: form.email,
@@ -58,7 +49,6 @@ class ParentFieldsSection extends ConsumerWidget {
           onChanged: controller.setEmail,
         ),
         const SizedBox(height: 12),
-
         CustomTextField(
           label: 'Teléfono *',
           value: form.phone,
@@ -92,36 +82,34 @@ class ParentFieldsSection extends ConsumerWidget {
           errorText: form.errors['documentId'],
           onChanged: controller.setDocumentId,
         ),
-
         const SizedBox(height: 18),
-        _OptionalFieldsTile(form: form, controller: controller, observationsC: observationsC),
+        _OptionalFieldsTile(observationsC: observationsC),
       ],
     );
   }
 }
 
-class _OptionalFieldsTile extends StatelessWidget {
-  final ParentFormState form;
-  final ParentFormController controller;
+class _OptionalFieldsTile extends ConsumerWidget {
   final TextEditingController observationsC;
 
-  const _OptionalFieldsTile({
-    required this.form,
-    required this.controller,
-    required this.observationsC,
-  });
+  const _OptionalFieldsTile({required this.observationsC});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final form = ref.watch(parentFormControllerProvider);
+    final controller = ref.read(parentFormControllerProvider.notifier);
+
     return Card(
       clipBehavior: Clip.antiAlias,
       child: ExpansionTile(
-        title: Text('Información adicional del responsable', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Información adicional del responsable',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         subtitle: const Text('Toca para agregar más información'),
         childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         children: [
           const SizedBox(height: 8),
-
           CustomSelectField(
             label: 'Relación',
             value: form.relationship,
@@ -129,14 +117,13 @@ class _OptionalFieldsTile extends StatelessWidget {
             items: const [
               DropdownMenuItem(value: 'Padre', child: Text('Padre')),
               DropdownMenuItem(value: 'Madre', child: Text('Madre')),
-              DropdownMenuItem(value: 'Tutor', child: Text('Tutor'))
+              DropdownMenuItem(value: 'Tutor', child: Text('Tutor')),
             ],
             onChanged: (v) {
               if (v != null) controller.setRelationship(v);
             },
           ),
           const SizedBox(height: 12),
-
           CustomRadioGroup(
             label: 'Género',
             groupValue: form.gender,
@@ -145,7 +132,6 @@ class _OptionalFieldsTile extends StatelessWidget {
             errorText: form.errors['gender'],
           ),
           const SizedBox(height: 12),
-
           CustomCheckboxGroup(
             label: 'Canales de contacto preferidos',
             options: contactOptions,
@@ -154,14 +140,12 @@ class _OptionalFieldsTile extends StatelessWidget {
             errorText: form.errors['contactChannels'],
           ),
           const SizedBox(height: 12),
-
           CustomSwitchField(
             label: '¿Está casado?',
             value: form.isMarried,
             onChanged: controller.setIsMarried,
           ),
           const SizedBox(height: 12),
-
           CustomAutocompleteField(
             label: 'Ocupación',
             value: form.occupation,
@@ -171,7 +155,6 @@ class _OptionalFieldsTile extends StatelessWidget {
             errorText: form.errors['occupation'],
           ),
           const SizedBox(height: 12),
-
           CustomTextField(
             label: 'Observaciones',
             value: form.observations,

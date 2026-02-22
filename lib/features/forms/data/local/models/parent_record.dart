@@ -27,10 +27,10 @@ class ParentRecord extends HiveObject {
   final String documentId;
 
   @HiveField(7)
-  final String? relationship;
+  final String relationship;
 
   @HiveField(8)
-  final String? gender;
+  final String gender;
 
   @HiveField(9)
   final List<String> contactChannels;
@@ -39,7 +39,7 @@ class ParentRecord extends HiveObject {
   final bool isMarried;
 
   @HiveField(11)
-  final String? occupation;
+  final String occupation;
 
   @HiveField(12)
   final String observations;

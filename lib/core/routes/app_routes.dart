@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class AppRoutes {
   static const parentList = '/';
-  static const parentCreate = '/parent/create';
+  static const parentForm = '/parent/create';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -13,9 +13,10 @@ class AppRoutes {
           settings: settings,
         );
 
-      case parentCreate:
+      case parentForm:
+        final parentId = settings.arguments as String?;
         return MaterialPageRoute(
-          builder: (_) => const ParentFormScreen(),
+          builder: (_) => ParentFormScreen(parentId: parentId),
           settings: settings,
         );
 

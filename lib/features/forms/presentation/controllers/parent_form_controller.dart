@@ -16,6 +16,10 @@ class ParentFormController extends Notifier<ParentFormState> {
 
   String _newChildId() => DateTime.now().microsecondsSinceEpoch.toString();
 
+  String? _loadedParentId;
+
+  bool isLoadedFor(String id) => _loadedParentId == id;
+
   String _firstLetter(String s) {
     final t = s.trim();
     if (t.isEmpty) return '';
@@ -75,7 +79,7 @@ class ParentFormController extends Notifier<ParentFormState> {
   void setGender(String v) => state = state.copyWith(gender: v);
 
   void toggleContactChannel(String channel) {
-    final next = <String>{...state.contactChannels};
+    final next = <String>{...?state.contactChannels};
     next.contains(channel) ? next.remove(channel) : next.add(channel);
     state = state.copyWith(contactChannels: next);
   }
@@ -186,6 +190,52 @@ class ParentFormController extends Notifier<ParentFormState> {
     return true;
   }
 
+  Future<void> loadForEdit(String parentId) async {
+    final box = ref.read(parentsBoxProvider);
+    final record = box.get(parentId);
+    if (record == null) return;
+
+    _loadedParentId = parentId;
+
+    state = ParentFormState(
+      id: record.id,
+      createdAt: record.createdAt,
+      updatedAt: record.updatedAt,
+
+      firstName: record.firstName,
+      lastName: record.lastName,
+      email: record.email,
+      phone: record.phone,
+      birthDate: record.birthDate,
+      documentId: record.documentId,
+
+      // no obligatorios
+      relationship: record.relationship,
+      gender: record.gender,
+      contactChannels: record.contactChannels.toSet(),
+      isMarried: record.isMarried,
+      occupation: record.occupation,
+      observations: record.observations,
+
+      children: record.children.map((c) {
+        return ChildFormState(
+          id: c.id,
+          firstName: c.firstName,
+          lastName: c.lastName,
+          age: c.age,
+          birthDate: c.birthDate,
+          hairColor: c.hairColor,
+          code: c.code,
+          errors: const {},
+        );
+      }).toList(),
+
+      errors: const {},
+    );
+
+    _recomputeAllChildrenCodes();
+  }
+
   bool validate() {
     final parentResult = _validateParent(
       firstName: state.firstName,
@@ -220,5 +270,10 @@ class ParentFormController extends Notifier<ParentFormState> {
     );
 
     return parentResult.isValid && childrenValid;
+  }
+
+  void reset() {
+    _loadedParentId = null;
+    state = const ParentFormState();
   }
 }
